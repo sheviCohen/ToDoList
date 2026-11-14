@@ -14,6 +14,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.MapPost("/items",async(ToDoDbContext myDB,Item item)=>
+{
+    myDB.Items.Add(item);
+    await myDB.SaveChangesAsync();
+    return Results.Created($"/items/{item.Id}",item);
+});
+
+app.MapGet("/items",async(ToDoDbContext myDB)=>await myDB.Items.AsNoTracking().ToListAsync());
 
 app.Run();
